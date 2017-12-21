@@ -1,3 +1,2 @@
-FROM simcu/laravel
+FROM lararun/aio
 COPY . /home/
-CMD sh /home/configByEnv.sh && /run.sh
