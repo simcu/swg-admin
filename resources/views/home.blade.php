@@ -6,7 +6,7 @@
 <!--<![endif]-->
 <head>
     <meta charset="utf-8"/>
-    <title>控制台 | 和创未来</title>
+    <title>控制台 | {{config('app.name')}}</title>
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
     <meta content="" name="description"/>
     <meta content="" name="author"/>
@@ -52,8 +52,8 @@
         <!-- begin brand -->
         <div class="login-header">
             <div class="brand">
-                <span class="logo"></span> 和创未来
-                <small>内部系统统一认证中心 - 控制台</small>
+                <span class="logo"></span> {{config('app.name')}}
+                <small>统一认证中心 - 控制台</small>
             </div>
             <div class="icon">
                 <i class="material-icons">lock</i>
