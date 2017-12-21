@@ -6,7 +6,7 @@
 <!--<![endif]-->
 <head>
     <meta charset="utf-8"/>
-    <title>和创未来 | 内部代理网关系统</title>
+    <title>{{config('app.name')}} | 内部代理网关系统</title>
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
 
     <!-- ================== BEGIN BASE CSS STYLE ================== -->
@@ -63,8 +63,8 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a href="index.html" class="navbar-brand">
-                    和创未来-内部代理网关
+                <a href="/" class="navbar-brand">
+                    {{config('app.name')}}-统一认证网关
                 </a>
             </div>
             <!-- end mobile sidebar expand / collapse button -->
