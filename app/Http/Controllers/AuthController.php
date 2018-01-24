@@ -24,7 +24,7 @@ class AuthController extends Controller
 
     public function doLogin(Request $r)
     {
-        if(Session::get('captcha') != $r->input('captcha')){
+        if (Session::get('captcha') != $r->input('captcha')) {
             return back()->with('msg', '验证码输入错误');
         }
         $u = User::where('username', $r->input('username'))->first();
@@ -54,8 +54,18 @@ class AuthController extends Controller
             $token = md5(time() . rand(1, 2832837) . $r->input('ref') . session('logined.login_time'));
             $exp = Carbon::now()->addSeconds(Cache::get('config_token_expire', 600));
             Cache::put('token_' . $token, session('logined.user.id'), $exp);
-            $bkurl = $r->input('ref');
-            return redirect($bkurl . ((strpos($bkurl, '?') !== false) ? '&' : '?') . 'swg_token=' . $token);
+            $tmp = explode('?', $r->input('ref'));
+            if (count($tmp) != 1) {
+                $params = explode('&', $tmp[1]);
+                $p_arr = [];
+                foreach ($params as $item) {
+                    $itmp = explode('=', $item);
+                    $p_arr[$itmp[0]] = $itmp[1];
+                }
+            }
+            $p_arr['swg_token'] = $token;
+            $bkurl = $tmp[0] . '?' . http_build_query($p_arr);
+            return redirect($bkurl);
         } else {
             $list = [];
             if (session('logined.user')->roles()->where('role_id', 1)->first()) {
