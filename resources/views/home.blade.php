@@ -12,9 +12,9 @@
     <meta content="" name="author"/>
 
     <!-- ================== BEGIN BASE CSS STYLE ================== -->
-    <link href="https://fonts.googleapis.com/css?family=Roboto:100,100italic,300,300italic,400,400italic,500,500italic,700,700italic,900,900italic"
-          rel="stylesheet" type="text/css"/>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    {{--<link href="https://fonts.googleapis.com/css?family=Roboto:100,100italic,300,300italic,400,400italic,500,500italic,700,700italic,900,900italic"--}}
+          {{--rel="stylesheet" type="text/css"/>--}}
+    {{--<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">--}}
     <link href="/assets/plugins/jquery-ui/themes/base/minified/jquery-ui.min.css" rel="stylesheet"/>
     <link href="/assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="/assets/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet"/>
@@ -53,10 +53,9 @@
         <div class="login-header">
             <div class="brand">
                 <span class="logo"></span> {{config('app.name')}}
-                <small>统一认证中心 - 控制台</small>
+                <small>服务代理系统 - 控制台</small>
             </div>
             <div class="icon">
-                <i class="material-icons">lock</i>
             </div>
         </div>
         <!-- end brand -->
@@ -84,7 +83,7 @@
                 <p><a href="/admin" target="_blank">网关系统管理后台 <br> http://{{{$_SERVER['HTTP_HOST']}}}/admin</a></p>
             @endif
             @foreach($list as $item)
-                <p><a href="http://{{{$item['url']}}}" target="_blank">{{{$item['name']}}} <br> http://{{{$item['url']}}}</a></p>
+                <p><a href="http://{{{$item['domain']}}}" target="_blank">{{{$item['name']}}} <br> http://{{{$item['domain']}}}</a></p>
             @endforeach
         </div>
     </div>

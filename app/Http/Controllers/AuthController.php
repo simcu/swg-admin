@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Host;
-use App\User;
+use App\Models\GateSite;
+use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Cache;
 use Gregwar\Captcha\CaptchaBuilder;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
 
 class AuthController extends Controller
 {
@@ -24,10 +24,10 @@ class AuthController extends Controller
 
     public function doLogin(Request $r)
     {
-        if (Session::get('captcha') != $r->input('captcha')) {
-            return back()->with('msg', '验证码输入错误');
-        }
-        $u = User::where('username', $r->input('username'))->first();
+//        if (Session::get('captcha') != $r->input('captcha')) {
+//            return back()->with('msg', '验证码输入错误');
+//        }
+        $u = User::where('username', $r->input('username'))->where('enable', true)->first();
         if ($u and Hash::check($r->input('password'), $u->password)) {
             $sess = [
                 'user' => $u,
@@ -53,7 +53,7 @@ class AuthController extends Controller
             Session(['logined.last_url' => $r->input('ref')]);
             $token = md5(time() . rand(1, 2832837) . $r->input('ref') . session('logined.login_time'));
             $exp = Carbon::now()->addSeconds(Cache::get('config_token_expire', 600));
-            Cache::put('token_' . $token, session('logined.user.id'), $exp);
+            Cache::put('swg_gate_token_' . $token, session('logined.user.id'), $exp);
             $tmp = explode('?', $r->input('ref'));
             if (count($tmp) != 1) {
                 $params = explode('&', $tmp[1]);
@@ -63,26 +63,26 @@ class AuthController extends Controller
                     $p_arr[$itmp[0]] = $itmp[1];
                 }
             }
-            $p_arr['swg_token'] = $token;
+            $p_arr['swg_gate_token'] = $token;
             $bkurl = $tmp[0] . '?' . http_build_query($p_arr);
             return redirect($bkurl);
         } else {
             $list = [];
             if (session('logined.user')->roles()->where('role_id', 1)->first()) {
-                foreach (Host::all() as $h) {
+                foreach (GateSite::all() as $h) {
                     $list[$h->id] = [
                         'name' => $h->name,
-                        'url' => $h->url
+                        'domain' => $h->domain
                     ];
                 }
             } else {
                 $urs = session('logined.user')->roles;
                 foreach ($urs as $ur) {
                     foreach ($ur->acls as $acl) {
-                        $h = $acl->host;
+                        $h = $acl->site;
                         $list[$h->id] = [
                             'name' => $h->name,
-                            'url' => $h->url
+                            'domain' => $h->domain
                         ];
                     }
                 }

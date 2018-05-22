@@ -12,9 +12,9 @@
     <meta content="" name="author"/>
 
     <!-- ================== BEGIN BASE CSS STYLE ================== -->
-    <link href="https://fonts.googleapis.com/css?family=Roboto:100,100italic,300,300italic,400,400italic,500,500italic,700,700italic,900,900italic"
-          rel="stylesheet" type="text/css"/>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    {{--<link href="https://fonts.googleapis.com/css?family=Roboto:100,100italic,300,300italic,400,400italic,500,500italic,700,700italic,900,900italic"--}}
+    {{--rel="stylesheet" type="text/css"/>--}}
+    {{--<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">--}}
     <link href="/assets/plugins/jquery-ui/themes/base/minified/jquery-ui.min.css" rel="stylesheet"/>
     <link href="/assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="/assets/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet"/>
@@ -53,10 +53,9 @@
         <div class="login-header">
             <div class="brand">
                 <span class="logo"></span> {{config('app.name')}}
-                <small>统一认证中心 - 修改密码</small>
+                <small>服务代理系统 - 修改密码</small>
             </div>
             <div class="icon">
-                <i class="material-icons">lock</i>
             </div>
         </div>
         <!-- end brand -->
@@ -71,7 +70,8 @@
                     <input type="password" class="form-control input-lg has-error" name="password" placeholder="新密码"/>
                 </div>
                 <div class="form-group m-b-20">
-                    <input type="password" class="form-control input-lg" name="password_confirmation" placeholder="再输一次"/>
+                    <input type="password" class="form-control input-lg" name="password_confirmation"
+                           placeholder="再输一次"/>
                 </div>
                 {{ csrf_field() }}
                 <div class="login-buttons">
@@ -107,7 +107,7 @@
 
 <script>
     @if (session('msg'))
-           alert("{{ session('msg') }}")
+    alert("{{ session('msg') }}")
     @endif
     $(document).ready(function () {
         App.init();

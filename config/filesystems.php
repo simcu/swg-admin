@@ -8,14 +8,12 @@ return [
     |--------------------------------------------------------------------------
     |
     | Here you may specify the default filesystem disk that should be used
-    | by the framework. A "local" driver, as well as a variety of cloud
-    | based drivers are available for your choosing. Just store away!
-    |
-    | Supported: "local", "ftp", "s3", "rackspace"
+    | by the framework. The "local" disk, as well as a variety of cloud
+    | based disks are available to your application. Just store away!
     |
     */
 
-    'default' => 'local',
+    'default' => env('FILESYSTEM_DRIVER', 'default'),
 
     /*
     |--------------------------------------------------------------------------
@@ -28,7 +26,7 @@ return [
     |
     */
 
-    'cloud' => 's3',
+    'cloud' => env('FILESYSTEM_CLOUD', 'ssl'),
 
     /*
     |--------------------------------------------------------------------------
@@ -39,29 +37,27 @@ return [
     | may even configure multiple disks of the same driver. Defaults have
     | been setup for each driver as an example of the required options.
     |
+    | Supported Drivers: "local", "ftp", "sftp", "s3", "rackspace"
+    |
     */
 
     'disks' => [
-
-        'local' => [
+        'default' => [
             'driver' => 'local',
-            'root' => storage_path('app'),
+            'root' => base_path()
         ],
-
-        'public' => [
+        'ssl' => [
             'driver' => 'local',
-            'root' => storage_path('app/public'),
-            'visibility' => 'public',
+            'root' => storage_path('app/ssl'),
         ],
-
-        's3' => [
-            'driver' => 's3',
-            'key' => 'your-key',
-            'secret' => 'your-secret',
-            'region' => 'your-region',
-            'bucket' => 'your-bucket',
+        'nginx' => [
+            'driver' => 'local',
+            'root' => storage_path('app/nginx'),
         ],
-
+        'ha' => [
+            'driver' => 'local',
+            'root' => storage_path('app/ha'),
+        ]
     ],
 
 ];
