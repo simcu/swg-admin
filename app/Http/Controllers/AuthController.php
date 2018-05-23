@@ -24,9 +24,9 @@ class AuthController extends Controller
 
     public function doLogin(Request $r)
     {
-//        if (Session::get('captcha') != $r->input('captcha')) {
-//            return back()->with('msg', '验证码输入错误');
-//        }
+        if (Session::get('captcha') != $r->input('captcha')) {
+            return back()->with('msg', '验证码输入错误');
+        }
         $u = User::where('username', $r->input('username'))->where('enable', true)->first();
         if ($u and Hash::check($r->input('password'), $u->password)) {
             $sess = [
@@ -98,11 +98,12 @@ class AuthController extends Controller
 
     public function changepass(Request $r)
     {
+        $user = session('logined.user');
         $this->validate($r, [
-            'oldpass' => 'required|password:' . session('logined.user')->id,
+            'oldpass' => 'required|password:' . $user->id,
             'password' => 'required|confirmed|min:8'
         ]);
-        $u = User::find(session('logined.user')->id);
+        $u = User::find($user->id);
         $u->password = bcrypt($r->input('password'));
         $u->save();
         return redirect('/');

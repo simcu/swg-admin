@@ -29,6 +29,10 @@ Route::group(['middleware' => 'auth'], function () {
             });
             Route::get('/sync', 'SystemController@sync');
             Route::get('/', 'SystemController@eyes');
+            Route::post('/fast-add/tcp', 'SystemController@fastAddTcp');
+            Route::post('/fast-add/gate', 'SystemController@fastAddGate');
+            Route::post('/fast-add/http', 'SystemController@fastAddHttp');
+            Route::post('/fast-add/https', 'SystemController@fastAddHttps');
         });
         Route::group(['prefix' => 'gate'], function () {
             Route::group(['prefix' => 'role'], function () {

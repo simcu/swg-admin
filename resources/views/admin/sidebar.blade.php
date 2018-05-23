@@ -9,8 +9,16 @@
                     <span>控制中心</span>
                 </a>
                 <ul class="sub-menu">
-                    <li><a href="/admin/system">系统概览</a></li>
+                    <li><a href="/admin/system">快捷操作</a></li>
                     <li><a href="/admin/system/sync">同步配置</a></li>
+                </ul>
+            </li>
+            <li class="has-sub active">
+                <a href="javascript:;">
+                    <span>权限管理</span>
+                </a>
+                <ul class="sub-menu">
+                    <li><a href="/admin/gate/role">角色管理</a></li>
                     <li><a href="/admin/system/user">用户管理</a></li>
                 </ul>
             </li>
@@ -20,7 +28,6 @@
                 </a>
                 <ul class="sub-menu">
                     <li><a href="/admin/gate/site">站点管理</a></li>
-                    <li><a href="/admin/gate/role">角色管理</a></li>
                     <li><a href="/admin/gate/config">配置管理</a></li>
                 </ul>
             </li>

@@ -11,10 +11,12 @@ namespace App\Http\Controllers\Admin;
 use App\Helpsers\Conf;
 use App\Http\Controllers\Controller;
 use App\Models\Backend;
+use App\Models\BackendHost;
 use App\Models\Front;
 use App\Models\GateSite;
 use App\Models\Ssl;
 use App\Models\Upstream;
+use App\Models\UpstreamHost;
 use App\Models\User;
 use App\Models\WebSite;
 use Illuminate\Http\Request;
@@ -22,6 +24,163 @@ use Illuminate\Support\Facades\Redis;
 
 class SystemController extends Controller
 {
+    public function fastAddTcp(Request $r)
+    {
+        $this->validate($r, [
+            'tcp_ip' => 'required|ipv4',
+            'tcp_port' => 'required|integer|min:1|max:65535',
+            'tcp_target_ip' => 'required|ipv4',
+            'tcp_target_port' => 'required|integer|min:1|max:65535'
+        ]);
+
+        //添加backend
+        $b = new Backend();
+        $b->name = str_replace('.', '_', $r->tcp_ip) . '_' . $r->tcp_port . '_to_'
+            . str_replace('.', '_', $r->tcp_target_ip) . '_' . $r->tcp_target_port . '_backend';
+        $b->type = 'roundrobin';
+        $b->save();
+        //添加backend host
+        $bh = new BackendHost();
+        $bh->backend_id = $b->id;
+        $bh->ip = $r->tcp_target_ip;
+        $bh->port = $r->tcp_target_port;
+        $bh->check = 1;
+        $bh->inter = 3000;
+        $bh->rise = 3;
+        $bh->fall = 3;
+        $bh->weight = 10;
+        $bh->save();
+        //添加front
+        $f = new Front();
+        $f->name = str_replace('.', '_', $r->tcp_ip) . '_' . $r->tcp_port . '_to_'
+            . str_replace('.', '_', $r->tcp_target_ip) . '_' . $r->tcp_target_port . '_front';
+        $f->ip = $r->tcp_ip;
+        $f->port = $r->tcp_port;
+        $f->backend_id = $b->id;
+        $f->enable = 1;
+        $f->save();
+        return back();
+    }
+
+    public function fastAddGate(Request $r)
+    {
+        $this->validate($r, [
+            'gate_name' => 'required',
+            'gate_domain' => 'required|unique:gate_sites,domain|unique:web_sites,domain|alpha_dash',
+            'gate_schema' => 'required|in:http,https',
+            'gate_target' => 'required'
+        ]);
+        //添加upstream
+        $up = new Upstream();
+        $up->name = str_replace('.', '_', $r->gate_domain) . '_fast_add';
+        $up->type = 'weight';
+        $up->schema = $r->gate_schema;
+        $up->save();
+
+        //添加 up host
+        $uh = new UpstreamHost();
+        $uh->upstream_id = $up->id;
+        $tmp = explode(':', $r->gate_target);
+        $uh->ip = $tmp[0];
+        $uh->port = $tmp[1];
+        $uh->weight = 10;
+        $uh->max_fails = 3;
+        $uh->fail_timeout = 120;
+        $uh->backup = 0;
+        $uh->save();
+
+        //添加 site
+        $gs = new GateSite();
+        $gs->name = $r->gate_name;
+        $gs->domain = $r->gate_domain;
+        $gs->upstream_id = $up->id;
+        $gs->save();
+        return back();
+    }
+
+    public function fastAddHttp(Request $r)
+    {
+        $this->validate($r, [
+            'http_domain' => 'required|unique:gate_sites,domain|unique:web_sites,domain|alpha_dash',
+            'http_schema' => 'required|in:http,https',
+            'http_target' => 'required'
+        ]);
+
+        //添加upstream
+        $up = new Upstream();
+        $up->name = str_replace('.', '_', $r->http_domain) . '_fast_add';
+        $up->type = 'weight';
+        $up->schema = $r->http_schema;
+        $up->save();
+
+        //添加 up host
+        $uh = new UpstreamHost();
+        $uh->upstream_id = $up->id;
+        $tmp = explode(':', $r->http_target);
+        $uh->ip = $tmp[0];
+        $uh->port = $tmp[1];
+        $uh->weight = 10;
+        $uh->max_fails = 3;
+        $uh->fail_timeout = 120;
+        $uh->backup = 0;
+        $uh->save();
+
+        $w = new WebSite();
+        $w->schema = 'http';
+        $w->ssl_id = 0;
+        $w->force_https = 0;
+        $w->domain = $r->http_domain;
+        $w->upstream_id = $up->id;
+        $w->save();
+        return back();
+    }
+
+    public function fastAddHttps(Request $r)
+    {
+        $this->validate($r, [
+            'https_domain' => 'required|unique:gate_sites,domain|unique:web_sites,domain|alpha_dash',
+            'https_crt' => 'required',
+            'https_key' => 'required',
+            'https_schema' => 'required|in:http,https',
+            'https_target' => 'required'
+        ]);
+
+        //添加证书
+        $s = new Ssl();
+        $s->name = $r->https_domain . '_fast_add';
+        $s->cert = $r->https_crt;
+        $s->key = $r->https_key;
+        $s->save();
+
+        //添加upstream
+        $up = new Upstream();
+        $up->name = str_replace('.', '_', $r->https_domain) . '_fast_add';
+        $up->type = 'weight';
+        $up->schema = $r->https_schema;
+        $up->save();
+
+        //添加 up host
+        $uh = new UpstreamHost();
+        $uh->upstream_id = $up->id;
+        $tmp = explode(':', $r->https_target);
+        $uh->ip = $tmp[0];
+        $uh->port = $tmp[1];
+        $uh->weight = 10;
+        $uh->max_fails = 3;
+        $uh->fail_timeout = 120;
+        $uh->backup = 0;
+        $uh->save();
+
+        $w = new WebSite();
+        $w->schema = 'https';
+        $w->ssl_id = $s->id;
+        $w->force_https = 1;
+        $w->domain = $r->https_domain;
+        $w->upstream_id = $up->id;
+        $w->save();
+        return back();
+    }
+
     public function users()
     {
         return view('admin.system.user', [
@@ -61,7 +220,7 @@ class SystemController extends Controller
         return view('admin.system.eyes');
     }
 
-    public function sync()
+    public function sync(Request $r)
     {
         $conf = new Conf();
         //网关配置
@@ -126,16 +285,14 @@ class SystemController extends Controller
             $conf->addLine("}");
             $conf->addLine();
         }
-        $config['swg_web_upstream'] = $conf->get();
-        $conf->clear();
         //website
         foreach (WebSite::all() as $item) {
             if ($item->ssl_id) {
                 $conf->addLine("server {");
                 $conf->addLine("    listen 443 ssl;");
                 $conf->addLine("    server_name " . $item->domain . ";");
-                $conf->addLine("    ssl_certificate /home/config/ssl/" . $item->ssl->name . ".crt;");
-                $conf->addLine("    ssl_certificate_key /home/config/ssl/" . $item->ssl->name . ".key;");
+                $conf->addLine("    ssl_certificate " . $item->ssl->name . ".crt;");
+                $conf->addLine("    ssl_certificate_key " . $item->ssl->name . ".key;");
                 $conf->addLine("    location / {");
                 $conf->addLine("        proxy_pass " . $item->upstream->schema . "://" . $item->upstream->name . ";");
                 $conf->addLine("        client_max_body_size  1000m;");
@@ -173,7 +330,6 @@ class SystemController extends Controller
         }
         $config['swg_web_config'] = $conf->get();
 
-//HA Backend
         $conf->clear();
         foreach (Backend::all() as $item) {
             $conf->addLine("backend " . $item['name']);
@@ -190,9 +346,6 @@ class SystemController extends Controller
                 $conf->addLine("    " . $str);
             }
         }
-        $config['swg_tcp_backend'] = $conf->get();
-//HA Front
-        $conf->clear();
         foreach (Front::all() as $item) {
             $name = str_replace(".", "_", str_replace(":", "_", $item->ip . ":" . $item->port));
             $name = str_replace('*', '0_0_0_0', $name);
@@ -200,13 +353,15 @@ class SystemController extends Controller
             $conf->addLine('    bind ' . $item->ip . ":" . $item->port);
             $conf->addLine('    default_backend ' . $item->backend->name);
         }
-        $config['swg_tcp_frontend'] = $conf->get();
+        $config['swg_tcp_config'] = $conf->get();
 
-//开始同步规则
-        foreach ($config as $k => $v) {
-            Redis::set($k, $v);
+        if ($r->doit == 1) {
+            foreach ($config as $k => $v) {
+                Redis::set($k, $v);
+            }
+            return back();
+        } else {
+            return view('admin.system.sync', ['config' => $config]);
         }
-        echo "同步规则完成 .... <a href='/admin'>返回</a>";
-        dd($config);
     }
 }
