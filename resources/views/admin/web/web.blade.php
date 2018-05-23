@@ -68,8 +68,7 @@
                         <td>{{{$v->domain}}}</td>
                         <td>@if($v->schema == 'https'){{{$v->ssl->name}}} @else - @endif</td>
                         <td>@if($v->schema == 'https'){{{$v->force_https?'是':'否'}}} @else - @endif</td>
-                        <td><a href="/admin/upstream/detail?id={{$v->upstream->id}}">{{{$v->upstream->schema}}}
-                                ://{{{$v->upstream->name}}}</a></td>
+                        <td><a href="/admin/upstream/detail?id={{$v->upstream->id}}">{{{$v->upstream->schema}}}://{{{$v->upstream->name}}}</a></td>
                         <td>{{{$v->created_at}}}</td>
                         <td>
                             [<a href="javascript:if(confirm('确实要删除吗?'))location='/admin/web/del?id={{{$v->id}}}'">删除</a>]
