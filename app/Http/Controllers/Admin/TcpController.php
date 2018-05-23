@@ -73,9 +73,9 @@ class TcpController extends Controller
 
     public function delBackend(Request $r)
     {
-        $b = Backend::find($r->id)->delete();
-        BackendHost::where('backend_id', $b->id)->delete();
-        Front::where('backend_id', $b->id)->delete();
+        Backend::find($r->id)->delete();
+        BackendHost::where('backend_id', $r->id)->delete();
+        Front::where('backend_id', $r->id)->delete();
         return back();
     }
 

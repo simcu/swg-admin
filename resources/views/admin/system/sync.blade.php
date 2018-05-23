@@ -4,7 +4,7 @@
     <div class="panel panel-inverse" data-sortable-id="table-basic-5">
         <div class="panel-heading">
             <div class="panel-heading-btn">
-                <a href="javascript:if(confirm('确实要删除吗?'))location='/admin/system/sync?doit=1'"
+                <a href="javascript:if(confirm('确定同步配置到Proxy吗?'))location='/admin/system/sync?doit=1'"
                    class="btn btn-xs btn-icon btn-circle btn-warning"><i
                             class="fa fa-plus"></i></a>
             </div>
