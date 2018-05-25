@@ -66,7 +66,7 @@ class SystemController extends Controller
     {
         $this->validate($r, [
             'gate_name' => 'required',
-            'gate_domain' => 'required|unique:gate_sites,domain|unique:web_sites,domain|alpha_dash',
+            'gate_domain' => 'required|unique:gate_sites,domain|unique:web_sites,domain',
             'gate_schema' => 'required|in:http,https',
             'gate_target' => 'required'
         ]);
@@ -101,7 +101,7 @@ class SystemController extends Controller
     public function fastAddHttp(Request $r)
     {
         $this->validate($r, [
-            'http_domain' => 'required|unique:gate_sites,domain|unique:web_sites,domain|alpha_dash',
+            'http_domain' => 'required|unique:gate_sites,domain|unique:web_sites,domain',
             'http_schema' => 'required|in:http,https',
             'http_target' => 'required'
         ]);
@@ -138,7 +138,7 @@ class SystemController extends Controller
     public function fastAddHttps(Request $r)
     {
         $this->validate($r, [
-            'https_domain' => 'required|unique:gate_sites,domain|unique:web_sites,domain|alpha_dash',
+            'https_domain' => 'required|unique:gate_sites,domain|unique:web_sites,domain',
             'https_crt' => 'required',
             'https_key' => 'required',
             'https_schema' => 'required|in:http,https',
