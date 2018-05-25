@@ -60,7 +60,7 @@ class AuthController extends Controller
                 $p_arr = [];
                 foreach ($params as $item) {
                     $itmp = explode('=', $item);
-                    $p_arr[$itmp[0]] = $itmp[1];
+                    $p_arr[$itmp[0]] = isset($itmp[1]) ? $itmp[1] : null;
                 }
             }
             $p_arr['swg_gate_token'] = $token;

@@ -323,7 +323,7 @@ class SystemController extends Controller
                 $conf->addLine("        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;");
                 $conf->addLine("        proxy_http_version 1.1;");
                 $conf->addLine("        proxy_set_header Upgrade \$http_upgrade;");
-                $conf->addLine("        proxy_set_header Connection \"upgrade\";");
+                $conf->addLine("        proxy_set_header Connection keep-alive;");
                 $conf->addLine("    }");
                 $conf->addLine("}");
             }
