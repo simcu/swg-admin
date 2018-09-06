@@ -43,10 +43,10 @@ class UpstreamController extends Controller
 
     public function del(Request $r)
     {
-        $u = Upstream::find($r->id)->delete();
-        UpstreamHost::where('upstream_id', $u->id)->delete();
-        GateSite::where('upstream_id', $u->id)->delete();
-        WebSite::where('upstream_id', $u->id)->delete();
+        Upstream::find($r->id)->delete();
+        UpstreamHost::where('upstream_id', $r->id)->delete();
+        GateSite::where('upstream_id', $r->id)->delete();
+        WebSite::where('upstream_id', $r->id)->delete();
         return back();
     }
 
